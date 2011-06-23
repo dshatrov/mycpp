@@ -1,0 +1,287 @@
+#ifndef __MYCPP_PRINT_TASK_H__
+#define __MYCPP_PRINT_TASK_H__
+
+#include <mycpp/file.h>
+#include <mycpp/strutil.h>
+#include <mycpp/string.h>
+
+/* It is better to include io.h than this file. */
+
+namespace MyCpp {
+
+class PrTask
+{
+protected:
+    mutable const PrTask *next;
+
+public:
+    virtual void out (File *file) const
+	       throw (IOException) = 0;
+
+    virtual void print (File *file) const = 0;
+
+    virtual unsigned long length () const = 0;
+
+    unsigned long chainLength () const
+    {
+	unsigned long len = 0;
+
+	const PrTask *last = next,
+		     *cur  = next;
+	do {
+	    len += cur->length ();
+	    cur = cur->next;
+	} while (cur != last);
+
+	return len;
+    }
+
+    void chainOut (File *file) const
+	    throw (IOException)
+    {
+	const PrTask *last = next,
+		     *cur  = next;
+	do {
+	    cur->out (file);
+	    cur = cur->next;
+	} while (cur != last);
+    }
+
+    void chainPrint (File *file) const
+    {
+	const PrTask *last = next,
+		     *cur  = next;
+	do {
+	    cur->print (file);
+	    cur = cur->next;
+	} while (cur != last);
+    }
+
+    void add (const PrTask &task) const
+    {
+	task.next = next;
+	next = &task;
+    }
+
+    const PrTask& operator () (const PrTask &task) const
+    {
+#if 0
+	/* TODO This const_cast looks dangerous.
+	 * Make sure it is correct. */
+	PrTask &task = const_cast <PrTask&> (_task);
+#endif
+	add (task);
+	return task;
+    }
+
+    PrTask ()
+    {
+	next = this;
+    }
+
+    virtual ~PrTask ()
+    {
+    }
+};
+
+class PrUll : public PrTask
+{
+protected:
+    unsigned long long value;
+
+public:
+    void out (File *file) const
+	throw (IOException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    PrUll (unsigned long long value)
+    {
+	this->value = value;
+    }
+};
+
+class PrUl : public PrTask
+{
+protected:
+    unsigned long value;
+
+public:
+    void out (File *file) const
+	throw (IOException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    PrUl (unsigned long value)
+    {
+	this->value = value;
+    }
+};
+
+class PrLl : public PrTask
+{
+protected:
+    long long value;
+
+public:
+    void out (File *file) const
+	throw (IOException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    PrLl (long long value)
+    {
+	this->value = value;
+    }
+};
+
+class PrL : public PrTask
+{
+protected:
+    long value;
+
+public:
+    void out (File *file) const
+	throw (IOException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    PrL (long value)
+    {
+	this->value = value;
+    }
+};
+
+class PrStr : public PrTask
+{
+protected:
+    const char    *str;
+    unsigned long  len;
+
+public:
+    void out (File *file) const
+	throw (IOException)
+    {
+	file->out (str, len);
+    }
+
+    void print (File *file) const
+    {
+	file->print (str, len);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (str, len);
+    }
+
+    PrStr (const char *str)
+    {
+	this->str = str;
+
+	if (str != NULL)
+	    len = countStrLength (str);
+	else
+	    len = 0;
+    }
+
+    PrStr (const char *str, unsigned long len)
+    {
+	this->str = str;
+	this->len = len;
+    }
+};
+
+class PrTaskFactory
+{
+public:
+    PrUll operator () (unsigned long long ull)
+    {
+	return PrUll (ull);
+    }
+
+    PrUl operator () (unsigned long ul)
+    {
+	return PrUl (ul);
+    }
+
+    PrLl operator () (long long ll)
+    {
+	return PrLl (ll);
+    }
+
+    PrL operator () (long l)
+    {
+	return PrL (l);
+    }
+
+    PrStr operator () (const char *str)
+    {
+	return PrStr (str);
+    }
+
+    PrStr operator () (const char    *str,
+		       unsigned long  len)
+    {
+	return PrStr (str, len);
+    }
+
+    PrStr operator () (const String *str)
+    {
+	if (str != NULL)
+	    return PrStr (str->getData (), str->getLength ());
+
+	return (PrStr (NULL, 0));
+    }
+};
+
+extern PrTaskFactory Pr;
+
+}
+
+#endif /* __MYCPP_PRINT_TASK_H__ */
+

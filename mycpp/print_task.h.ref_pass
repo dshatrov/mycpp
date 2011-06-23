@@ -1,0 +1,263 @@
+#ifndef __MYCPP__PRINT_TASK_H__
+#define __MYCPP__PRINT_TASK_H__
+
+#include <mycpp/genutil.h>
+#include <mycpp/file.h>
+#include <mycpp/strutil.h>
+#include <mycpp/string.h>
+
+/* It is better to include io.h than this file. */
+
+namespace MyCpp {
+
+class PrTask
+{
+//protected:
+public:
+    // We're using an ad-hoc linked list here. The source of complexity
+    // is that PrTask objects are supposed to be created on the stack,
+    // and, according to C++ rules, we can pass them to the functions
+    // only as constant references.
+    PrTask *first,
+	   *next,
+	   *previous;
+
+//    add (PrTask foo) <- by value!
+//    forPrintTask (PrTask foo); (may ater!)
+// foo.doSomething () - _fixation_
+// 'first' could be masqueraded as 'next' (+)
+
+public:
+    virtual void out (File *file) const
+	       throw (IOException,
+		      InternalException) = 0;
+
+    virtual void print (File *file) const = 0;
+
+    virtual unsigned long length () const = 0;
+
+    unsigned long chainLength () const
+    {
+	unsigned long len = 0;
+
+	PrTask *cur = first;
+	while (cur != NULL) {
+	    len += cur->length ();
+	    cur = cur->next;
+	}
+
+	if (first != this)
+	    len += length ();
+
+	return len;
+    }
+
+    void chainOut (File *file) const
+	    throw (IOException,
+		   InternalException)
+    {
+	PrTask *cur = first;
+	while (cur != NULL) {
+	    cur->out (file);
+	    cur = cur->next;
+	}
+
+	if (first != this)
+	    out (file);
+    }
+
+    void chainPrint (File *file) const
+    {
+	PrTask *cur = first;
+	while (cur != NULL) {
+	    cur->print (file);
+	    cur = cur->next;
+	}
+
+	if (first != this)
+	    print (file);
+    }
+
+    template <class T>
+    T add (const T &task)
+    {
+	if (previous != NULL)
+	    previous->next = this;
+
+	return T (task, this);
+    }
+
+    template <class T>
+    T operator () (const T &task)
+    {
+	return add (task);
+    }
+
+    PrTask ()
+    {
+	first = this;
+	next = NULL;
+	previous = NULL;
+    }
+
+    virtual ~PrTask ()
+    {
+    }
+};
+
+template<class T>
+class Pr_Base : public PrTask
+{
+protected:
+    T value;
+
+public:
+    void out (File *file) const
+	throw (IOException,
+	       InternalException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    Pr_Base (T value)
+    {
+	this->value = value;
+    }
+
+    Pr_Base (Pr_Base<T> const &task, PrTask *previous)
+    {
+	abortIf (previous == NULL);
+
+	this->value = task.value;
+
+	this->previous = previous;
+	first = previous->first;
+    }
+};
+
+typedef Pr_Base<unsigned long long> PrUll;
+
+typedef Pr_Base<unsigned long> PrUl;
+
+typedef Pr_Base<long long> PrLl;
+
+typedef Pr_Base<long> PrL;
+
+typedef Pr_Base<double> PrDbl;
+
+class PrStr : public PrTask
+{
+protected:
+    ConstMemoryDesc mem;
+
+public:
+    void out (File *file) const
+	throw (IOException,
+	       InternalException)
+    {
+	file->out (mem);
+    }
+
+    void print (File *file) const
+    {
+	file->print (mem);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (mem);
+    }
+
+    PrStr (const char *str)
+    {
+	if (str != NULL)
+	    mem = ConstMemoryDesc (str, countStrLength (str));
+	else
+	    mem = ConstMemoryDesc ();
+    }
+
+    PrStr (ConstMemoryDesc const &mem)
+    {
+	this->mem = mem;
+    }
+
+    PrStr (PrStr const &task, PrTask *previous)
+    {
+	abortIf (previous == NULL);
+
+	this->mem = task.mem;
+
+	this->previous = previous;
+	first = previous->first;
+    }
+};
+
+class PrTaskFactory
+{
+public:
+    PrUll operator () (unsigned long long ull) const
+    {
+	return PrUll (ull);
+    }
+
+    PrUl operator () (unsigned long ul) const
+    {
+	return PrUl (ul);
+    }
+
+    PrLl operator () (long long ll) const
+    {
+	return PrLl (ll);
+    }
+
+    PrL operator () (long l) const
+    {
+	return PrL (l);
+    }
+
+    PrDbl operator () (double dbl) const
+    {
+	return PrDbl (dbl);
+    }
+
+    PrStr operator () (const char *str) const
+    {
+	return PrStr (str);
+    }
+
+    PrStr operator () (ConstMemoryDesc const &mdesc) const
+    {
+	return PrStr (mdesc);
+    }
+
+    PrStr operator () (const String *str) const
+    {
+	if (str != NULL)
+	    return PrStr (str->getMemoryDesc ());
+
+	return (PrStr (ConstMemoryDesc ()));
+    }
+};
+
+// TODO: The idea with Pr() is just bad. Get rid of it
+// in favor of cleaner syntax and better runtime.
+// Some ideas:
+//     PrintTask() << 1 << 1.0 << "a";
+//     PrintTask (1) (1.0) ("a");
+//     PrintTask (1) << 1.0 << "a";
+extern PrTaskFactory Pr;
+
+}
+
+#endif /* __MYCPP__PRINT_TASK_H__ */
+

@@ -1,0 +1,232 @@
+#ifndef __MYCPP_PRINT_TASK_H__
+#define __MYCPP_PRINT_TASK_H__
+
+#include <mycpp/file.h>
+#include <mycpp/strutil.h>
+#include <mycpp/string.h>
+
+/* It is better to include io.h than this file. */
+
+namespace MyCpp {
+
+class PrTask
+{
+protected:
+    PrTask *next;
+
+public:
+    virtual void out (File *file)
+	       throw (IOException,
+		      InternalException) = 0;
+
+    virtual void print (File *file) const = 0;
+
+    virtual unsigned long length () const = 0;
+
+    unsigned long chainLength () const
+    {
+	unsigned long len = 0;
+
+	PrTask *last = next,
+	       *cur  = next;
+	do {
+	    len += cur->length ();
+	    cur = cur->next;
+	} while (cur != last);
+
+	return len;
+    }
+
+    void chainOut (File *file) const
+	    throw (IOException,
+		   InternalException)
+    {
+	PrTask *last = next,
+	       *cur  = next;
+	do {
+	    cur->out (file);
+	    cur = cur->next;
+	} while (cur != last);
+    }
+
+    void chainPrint (File *file) const
+    {
+	PrTask *last = next,
+	       *cur  = next;
+	do {
+	    cur->print (file);
+	    cur = cur->next;
+	} while (cur != last);
+    }
+
+    void add (const PrTask &_task)
+    {
+	PrTask &task = const_cast <PrTask&> (_task);
+
+	task.next = next;
+	next = &task;
+    }
+
+    PrTask& operator () (const PrTask &_task)
+    {
+	PrTask &task = const_cast <PrTask&> (_task);
+
+	add (task);
+	return task;
+    }
+
+    PrTask ()
+    {
+	next = this;
+    }
+
+    virtual ~PrTask ()
+    {
+    }
+};
+
+template<class T>
+class Pr_Base : public PrTask
+{
+protected:
+    T value;
+
+public:
+    void out (File *file)
+	throw (IOException,
+	       InternalException)
+    {
+	file->out (value);
+    }
+
+    void print (File *file) const
+    {
+	file->print (value);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (value);
+    }
+
+    Pr_Base (T value)
+    {
+	this->value = value;
+    }
+};
+
+typedef Pr_Base<unsigned long long> PrUll;
+
+typedef Pr_Base<unsigned long> PrUl;
+
+typedef Pr_Base<long long> PrLl;
+
+typedef Pr_Base<long> PrL;
+
+typedef Pr_Base<double> PrDbl;
+
+class PrStr : public PrTask
+{
+protected:
+    ConstMemoryDesc mem;
+
+public:
+    void out (File *file)
+	throw (IOException,
+	       InternalException)
+    {
+	file->out (mem);
+    }
+
+    void print (File *file) const
+    {
+	file->print (mem);
+    }
+
+    unsigned long length () const
+    {
+	return File::nout (mem);
+    }
+
+    PrStr (const char *str)
+    {
+	if (str != NULL)
+	    mem = ConstMemoryDesc (str, countStrLength (str));
+	else
+	    mem = ConstMemoryDesc ();
+    }
+
+    PrStr (ConstMemoryDesc const &mem)
+    {
+	this->mem = mem;
+    }
+};
+
+class PrTaskFactory
+{
+public:
+    PrUll operator () (unsigned long long ull)
+    {
+	return PrUll (ull);
+    }
+
+    PrUl operator () (unsigned long ul)
+    {
+	return PrUl (ul);
+    }
+
+    PrLl operator () (long long ll)
+    {
+	return PrLl (ll);
+    }
+
+    PrL operator () (long l)
+    {
+	return PrL (l);
+    }
+
+    PrDbl operator () (double dbl)
+    {
+	return PrDbl (dbl);
+    }
+
+    PrStr operator () (const char *str)
+    {
+	return PrStr (str);
+    }
+
+#if 0
+DEPRECATED
+    PrStr operator () (const char    *str,
+		       unsigned long  len)
+    {
+	return PrStr (str, len);
+    }
+
+    PrStr operator () (const unsigned char *str,
+		       unsigned long len)
+    {
+	return PrStr ((const char*) str, len);
+    }
+#endif
+
+    PrStr operator () (ConstMemoryDesc const &mdesc)
+    {
+	return PrStr (mdesc);
+    }
+
+    PrStr operator () (const String *str)
+    {
+	if (str != NULL)
+	    return PrStr (str->getMemoryDesc ());
+
+	return (PrStr (ConstMemoryDesc ()));
+    }
+};
+
+extern PrTaskFactory Pr;
+
+}
+
+#endif /* __MYCPP_PRINT_TASK_H__ */
+
