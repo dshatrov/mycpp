@@ -537,6 +537,9 @@ EpollPollGroup::trigger ()
 void
 EpollPollGroup::closeTriggerPipeOne ()
 {
+    if (triggerPipe [0] == -1)
+	return;
+
     for (;;) {
 	int res = close (triggerPipe [0]);
 	if (res == -1) {
@@ -553,11 +556,16 @@ EpollPollGroup::closeTriggerPipeOne ()
 
 	break;
     }
+
+    triggerPipe [0] = -1;
 }
 
 void
 EpollPollGroup::closeTriggerPipeTwo ()
 {
+    if (triggerPipe [1] == -1)
+	return;
+
     for (;;) {
 	int res = close (triggerPipe [1]);
 	if (res == -1) {
@@ -574,11 +582,16 @@ EpollPollGroup::closeTriggerPipeTwo ()
 
 	break;
     }
+
+    triggerPipe [1] = -1;
 }
 
 void
 EpollPollGroup::closeEfd ()
 {
+    if (efd == -1)
+	return;
+
     for (;;) {
 	int res = close (efd);
 	if (res == -1) {
@@ -595,14 +608,20 @@ EpollPollGroup::closeEfd ()
 
 	break;
     }
+
+    efd = -1;
 }
 
 EpollPollGroup::EpollPollGroup ()
     throw (InternalException)
+    : efd (-1)
 {
     DEBUG2 (
 	errf->print (this).print (" MyCpp.EpollPollGroup.()").pendl ();
     )
+
+    triggerPipe [0] = -1;
+    triggerPipe [1] = -1;
 
     if (pipe (triggerPipe))
 	throw InternalException (
