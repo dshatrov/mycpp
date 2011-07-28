@@ -81,6 +81,11 @@ public:
 	return length;
     }
 
+    // Use this carefully.
+    void setLength (unsigned long const length) {
+	this->length = length;
+    }
+
     bool equalsTo (const char *str) const
     {
 	if (str == NULL) {
