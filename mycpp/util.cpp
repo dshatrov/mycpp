@@ -18,7 +18,6 @@
  */
 
 #include <stdlib.h>
-#include <malloc.h>
 
 #ifndef PLATFORM_WIN32
 #include <execinfo.h> /* for backtraces */
