@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-#ifndef PLATFORM_WIN32
+#ifdef __linux__
 #include <execinfo.h> /* for backtraces */
 #endif
 
@@ -102,7 +102,7 @@ _oopsMessage (const char    *file,
 char*
 rawCollectBacktrace ()
 {
-#ifndef PLATFORM_WIN32
+#ifdef __linux__
     const char *fail_str = "[Failed to get the backtrace]";
 
     void *addrs [128];
