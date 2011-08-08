@@ -1,9 +1,7 @@
 COMMON_CFLAGS =				\
-	-D_POSIX_C_SOURCE=199309L	\
-	-D_XOPEN_SOURCE=600		\
 	-ggdb				\
 	-Wno-long-long -Wall -Wextra	\
-	-include config.h		\
+	-include "config.h"		\
 	$(THIS_CFLAGS)
 
 if PLATFORM_WIN32
@@ -13,14 +11,8 @@ else
     COMMON_CFLAGS += -rdynamic
 endif
 
-AM_CFLAGS = -std=c99 $(COMMON_CFLAGS)
-AM_CXXFLAGS = $(COMMON_CFLAGS) #-fno-default-inline -fkeep-inline-functions
-
-if PLATFORM_WIN32
-else
-# <fstream> doesn't work in strict ANSI mode with MinGW.
-AM_CXXFLAGS += -std=gnu++0x #-ansi
-endif
+AM_CFLAGS = -std=gnu99 $(COMMON_CFLAGS)
+AM_CXXFLAGS = -std=gnu++0x $(COMMON_CFLAGS) #-fno-default-inline -fkeep-inline-functions
 
 INCLUDES = -I$(top_srcdir)
 
