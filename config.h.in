@@ -35,7 +35,13 @@
 #undef LT_OBJDIR
 
 /* */
+#undef MYCPP_ENABLE_EPOLL
+
+/* */
 #undef MYCPP_ENABLE_MEMPROF
+
+/* */
+#undef MYCPP_USE_SELECT
 
 /* Name of package */
 #undef PACKAGE
