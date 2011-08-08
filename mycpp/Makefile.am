@@ -161,7 +161,6 @@ mycpp_linux_target_headers =		\
 					\
 	native_async_file.h		\
 	select_poll_group.h		\
-	epoll_poll_group.h		\
 					\
 	posix.h				\
 	native_file.linux.h		\
@@ -173,6 +172,12 @@ mycpp_win32_target_headers =		\
 	native_file.win32.h		\
 	wsa_poll_group.h
 #	threaded_wsa_poll_group.h
+
+if MYCPP_ENABLE_EPOLL
+    mycpp_linux_target_headers += epoll_poll_group.h
+else
+    mycpp_private_headers += epoll_poll_group.h
+endif
 
 if PLATFORM_WIN32
     mycpp_target_headers  += $(mycpp_win32_target_headers)
@@ -286,7 +291,6 @@ mycpp_linux_sources =			\
 	vfs_posix.cpp			\
 	native_async_file.cpp		\
 	select_poll_group.cpp		\
-	epoll_poll_group.cpp		\
 					\
 	posix.cpp			\
 	native_file.linux.cpp		\
@@ -300,6 +304,12 @@ mycpp_win32_sources =			\
 #	threaded_wsa_poll_group.cpp
 
 mycpp_extra_dist =
+
+if MYCPP_ENABLE_EPOLL
+    mycpp_linux_sources += epoll_poll_group.cpp
+else
+    mycpp_extra_dist += epoll_poll_group.cpp
+endif
 
 if PLATFORM_WIN32
     libmycpp_1_0_la_SOURCES += $(mycpp_win32_sources)

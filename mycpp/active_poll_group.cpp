@@ -4,10 +4,12 @@
 #include <mycpp/busy_poll_group.h>
 
 #ifdef PLATFORM_WIN32
-#include <mycpp/wsa_poll_group.h>
+  #include <mycpp/wsa_poll_group.h>
 #else
-#include <mycpp/epoll_poll_group.h>
-#include <mycpp/select_poll_group.h>
+  #ifdef MYCPP_ENABLE_EPOLL
+    #include <mycpp/epoll_poll_group.h>
+  #endif
+  #include <mycpp/select_poll_group.h>
 #endif
 
 namespace MyCpp {
@@ -21,8 +23,11 @@ ActivePollGroup::createDefault ()
     return grab (static_cast <ActivePollGroup*> (new WsaPollGroup ()));
 #else
 //    return grab (static_cast <ActivePollGroup*> (new BusyPollGroup ()));
+  #if defined (MYCPP_ENABLE_EPOLL) && !defined (MYCPP_USE_SELECT)
     return grab (static_cast <ActivePollGroup*> (new EpollPollGroup ()));
-//    return grab (static_cast <ActivePollGroup*> (new SelectPollGroup ()));
+  #else
+    return grab (static_cast <ActivePollGroup*> (new SelectPollGroup ()));
+  #endif
 #endif
 }
 
