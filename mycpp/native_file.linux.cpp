@@ -1,5 +1,7 @@
+#ifdef __linux__
 /* For lseek64() */
 #define _LARGEFILE64_SOURCE
+#endif
 
 #include <cstdio> // DEBUG
 
@@ -174,8 +176,12 @@ NativeFile::seek (Int64      offset,
 	throw InternalException ();
     }
 
+#ifdef __linux__
     /* NOTE: lseek64() seems to be glibc-specific. */
     if (lseek64 (fd, (off64_t) offset, whence) == (off64_t) -1) {
+#else
+    if (lseek (fd, (off_t) offset, whence) == (off_t) -1) {
+#endif
 	rw_lock.readerUnlock ();
 	throw IOException (errnoToString (errno));
     }
