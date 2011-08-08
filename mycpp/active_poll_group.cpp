@@ -1,3 +1,5 @@
+#include <mycpp/mycpp_config.h>
+
 #include <mycpp/util.h>
 
 #include <mycpp/active_poll_group.h>
