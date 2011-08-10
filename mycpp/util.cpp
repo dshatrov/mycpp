@@ -100,7 +100,7 @@ _oopsMessage (const char    *file,
 }
 
 #if 0
-// Mover to libMary.
+// Moved to libMary.
 char*
 rawCollectBacktrace ()
 {
