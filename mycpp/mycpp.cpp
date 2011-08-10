@@ -37,7 +37,7 @@ MyCpp::DynamicTreeArray<int> dta (4);
  (DEBUG) */
 
 
-#define MYCPP__FAKE_LOCK
+//#define MYCPP__FAKE_LOCK
 
 
 namespace MyCpp {
