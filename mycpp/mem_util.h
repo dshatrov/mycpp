@@ -1,7 +1,11 @@
 #ifndef __MYCPP__MEM_UTIL_H__
 #define __MYCPP__MEM_UTIL_H__
 
+
+#include <libmary/util_dev.h>
+
 #include <mycpp/memory_desc.h>
+
 
 namespace MyCpp {
 
@@ -35,9 +39,11 @@ void zeroMemory (T &obj)
     zeroMemory (MemoryDesc ((Byte*) &obj, sizeof obj));
 }
 
-char* rawCollectBacktrace ();
+//char* rawCollectBacktrace ();
+using M::rawCollectBacktrace;
 
 }
+
 
 #endif /* __MYCPP__MEM_UTIL_H__ */
 

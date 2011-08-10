@@ -99,6 +99,8 @@ _oopsMessage (const char    *file,
     errf->pendl ();
 }
 
+#if 0
+// Mover to libMary.
 char*
 rawCollectBacktrace ()
 {
@@ -188,6 +190,7 @@ rawCollectBacktrace ()
     return NULL;
 #endif
 }
+#endif
 
 Ref<String>
 collectBacktrace ()
