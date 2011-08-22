@@ -13,8 +13,9 @@ typedef bool (*ParseCmdlineCallback) (const char *short_name,
 				      void       *opt_data,
 				      void       *callback_data);
 
-struct CmdlineOption
+class CmdlineOption
 {
+public:
     const char *short_name,
 	       *long_name;
 
@@ -22,6 +23,15 @@ struct CmdlineOption
     void *opt_data;
 
     ParseCmdlineCallback opt_callback;
+
+    CmdlineOption ()
+	: short_name   (NULL),
+	  long_name    (NULL),
+	  with_value   (false),
+	  opt_data     (NULL),
+	  opt_callback (NULL)
+    {
+    }
 };
 
 void parseCmdline (int    *argc,
