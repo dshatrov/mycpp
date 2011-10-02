@@ -243,10 +243,6 @@ libmycpp_1_0_la_SOURCES =		\
 					\
 	vfs.cpp				\
 					\
-	page_pool.cpp			\
-					\
-	completion_notifier.cpp		\
-					\
 	io_actor.cpp			\
 	pollable.cpp			\
 	active_poll_group.cpp		\
@@ -254,9 +250,6 @@ libmycpp_1_0_la_SOURCES =		\
 	poller.cpp			\
 	background_poller.cpp		\
 	simple_threaded_poller.cpp	\
-					\
-	waitable.cpp			\
-	wait_group.cpp			\
 					\
 	mycpp_thread_local.cpp		\
 	thread.cpp			\
@@ -276,6 +269,12 @@ libmycpp_1_0_la_SOURCES =		\
 	async_stream_in.cpp		\
 	async_stream_out.cpp		\
 	async_stream_pump.cpp
+
+# Trash
+#	waitable.cpp
+#	wait_group.cpp
+#	completion_notifier.cpp
+#	page_pool.cpp
 
 if ENABLE_MEMPROF
 libmycpp_1_0_la_SOURCES +=		\
