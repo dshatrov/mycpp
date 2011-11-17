@@ -25,7 +25,8 @@
 #include <cassert>
 
 #include <cstdlib> // for NULL
-#include <glib/gtypes.h> /* For glib's basic types (guint32 etc.) */
+//#include <glib/gtypes.h> /* For glib's basic types (guint32 etc.) */
+#include <glib.h>
 
 #include <libmary/types.h>
 

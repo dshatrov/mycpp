@@ -22,7 +22,8 @@
 
 /* This include directive makes gthread.h included in virtually any
  * MyCpp-aware source file. */
-#include <glib/gthread.h>
+//#include <glib/gthread.h>
+#include <glib.h>
 
 #include <mycpp/types.h>
 #include <mycpp/base_util.h>

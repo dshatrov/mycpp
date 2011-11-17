@@ -1,7 +1,8 @@
 #ifndef __MYCPP_UNICODE_H__
 #define __MYCPP_UNICODE_H__
 
-#include <glib/gunicode.h>
+//#include <glib/gunicode.h>
+#include <glib.h>
 
 #include <mycpp/types.h>
 #include <mycpp/iterator.h>

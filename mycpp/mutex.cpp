@@ -1,5 +1,6 @@
-#include <glib/gthread.h>
-#include <glib/gmessages.h>
+//#include <glib/gthread.h>
+//#include <glib/gmessages.h>
+#include <glib.h>
 
 #include <mycpp/base_util.h>
 

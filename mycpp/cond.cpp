@@ -1,4 +1,5 @@
-#include <glib/gthread.h>
+//#include <glib/gthread.h>
+#include <glib.h>
 
 #include <mycpp/mycpp_thread_local.h>
 #include <mycpp/deletion_queue.h>
