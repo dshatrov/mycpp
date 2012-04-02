@@ -27,6 +27,8 @@ public:
 	virtual void start   () = 0;
 	virtual bool hasNext () = 0;
 	virtual T&   next    () = 0;
+
+        virtual ~Enumeration () {}
 };
 
 #endif /*__MYCPP_ENUMERATION_H__*/
