@@ -212,9 +212,7 @@ using M::VoidFunction;
 // TODO Get rid of this
 typedef void (*RefCallback) (void *data);
 
-class EmptyBase
-{
-};
+using M::EmptyBase;
 
 }
 
