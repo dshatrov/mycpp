@@ -17,13 +17,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __MYCPP__NATIVE_FILE_H__
-#define __MYCPP__NATIVE_FILE_H__
 
-#include <Windows.h>
+#ifndef __MYCPP__NATIVE_FILE__H__
+#define __MYCPP__NATIVE_FILE__H__
+
+
+#include <mycpp/types.h>
+#include <windows.h>
 
 #include <mycpp/file.h>
 #include <mycpp/rw_lock.h>
+
 
 namespace MyCpp {
 
@@ -94,5 +98,6 @@ public:
 
 }
 
-#endif /* __MYCPP__NATIVE_FILE_H__ */
+
+#endif /* __MYCPP__NATIVE_FILE__H__ */
 

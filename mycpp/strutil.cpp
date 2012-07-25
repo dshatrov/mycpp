@@ -848,6 +848,7 @@ printError (const char *str)
 	 .pendl ();
 }
 #else
+// Very similar to M::win32ErrorToString().
 Ref<String>
 win32ErrorToString (DWORD error)
 {

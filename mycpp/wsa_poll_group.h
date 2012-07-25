@@ -40,7 +40,7 @@ public:
 	Ref<GenericInformer::Subscription> input_sbn,
 					   output_sbn,
 					   pre_closed_sbn;
-	Ref<DeletionSubscription> del_sbn;
+	DeletionSubscriptionKey del_sbn;
 
 	List< Ref<PollableRecord> >::Element *pollables_link;
 

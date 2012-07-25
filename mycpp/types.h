@@ -17,8 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+
 #ifndef __MYCPP__TYPES_H__
 #define __MYCPP__TYPES_H__
+
+
+#include <libmary/types.h>
 
 #include <stdint.h>
 
@@ -28,7 +32,6 @@
 //#include <glib/gtypes.h> /* For glib's basic types (guint32 etc.) */
 #include <glib.h>
 
-#include <libmary/types.h>
 
 namespace MyCpp {
 
@@ -215,6 +218,7 @@ typedef void (*RefCallback) (void *data);
 using M::EmptyBase;
 
 }
+
 
 #endif /* __MYCPP__TYPES_H__ */
 
