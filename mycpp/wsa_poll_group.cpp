@@ -26,9 +26,9 @@ requestPollableEvents (Pollable        *pollable,
     long wsa_events = 0;
 
     if (events & IoActor::EventRead)
-	wsa_events |= FD_READ | FD_ACCEPT | FD_CLOSE;
+	wsa_events |= FD_READ | FD_OOB | FD_ACCEPT | FD_CLOSE;
     if (events & IoActor::EventWrite)
-	wsa_events |= FD_WRITE | FD_OOB | FD_CONNECT | FD_CLOSE;
+	wsa_events |= FD_WRITE | FD_CONNECT | FD_CLOSE;
     if (events & IoActor::EventError)
 	wsa_events |= FD_CLOSE;
 
@@ -217,15 +217,12 @@ WsaPollGroup::addPollable (Pollable *pollable,
 	}
     }
 
-    {
-	CallbackDesc<DeletionCallback> cb;
-	cb.weak_obj = this;
-	cb.callback = pollable_deletion_callback;
-	cb.callbackData = pr;
-	cb.addRefData (pr);
-
-	pr->del_sbn = pollable->addDeletionCallbackNonmutual (cb);
-    }
+    pr->del_sbn =
+            pollable->addDeletionCallbackNonmutual (
+                    pollable_deletion_callback,
+                    pr   /* cb_data */,
+                    pr   /* ref_data */,
+                    this /* guard_obj */);
 
     pr->pollables_link = pollables.append (pr);
     num_pollables ++;
