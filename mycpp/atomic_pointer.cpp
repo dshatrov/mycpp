@@ -18,10 +18,10 @@ AtomicPointer::get () const
 
 bool
 AtomicPointer::compareAndExchange (void *oldPtr,
-				   void *newPtr)
+                                   void *newPtr)
 {
     return (bool) g_atomic_pointer_compare_and_exchange (
-			&ptr, (gpointer) oldPtr, (gpointer) newPtr);
+                          &ptr, (gpointer) oldPtr, (gpointer) newPtr);
 }
 
 AtomicPointer::AtomicPointer ()

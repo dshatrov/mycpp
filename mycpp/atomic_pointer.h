@@ -25,7 +25,9 @@ namespace MyCpp {
 class AtomicPointer
 {
 protected:
-    void * /*gpointer*/ volatile ptr;
+    // Mutable, because g_atomic_pointer_get() takes non-const
+    // parameter in mingw.
+    mutable void * /*gpointer*/ volatile ptr;
 
 public:
     void set (void *ptr);
