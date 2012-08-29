@@ -38,14 +38,6 @@ uSleep (unsigned long microseconds)
     g_usleep ((gulong) microseconds);
 }
 
-Uint32
-randomUint32 ()
-{
-    /* From Glib docs on g_random_int():
-     * "Return a random guint32 equally distributed over the range [0..2^32-1]." */
-    return (Uint32) g_random_int ();
-}
-
 void
 _abortIfReached (const char    *file,
 		 unsigned long  line,

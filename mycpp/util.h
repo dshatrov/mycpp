@@ -20,6 +20,8 @@
 #ifndef __MYCPP__UTIL_H__
 #define __MYCPP__UTIL_H__
 
+#include <libmary/util_common.h>
+
 #include <mycpp/base_util.h>
 #include <mycpp/mem_util.h>
 #include <mycpp/strutil.h>
@@ -51,7 +53,7 @@ void printException (File *out,
 
 void uSleep (unsigned long microseconds);
 
-Uint32 randomUint32 ();
+using M::randomUint32;
 
 void hexDump (File *file,
 	      ConstMemoryDesc const &mdesc);
