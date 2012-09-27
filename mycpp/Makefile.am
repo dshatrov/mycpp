@@ -1,7 +1,7 @@
-COMMON_CFLAGS =				\
-	-ggdb				\
-	-Wno-long-long -Wall -Wextra	\
-	-include "config.h"		\
+COMMON_CFLAGS =			\
+	-ggdb			\
+	-Wno-long-long -Wall    \
+	-include "config.h"	\
 	$(THIS_CFLAGS)
 
 if PLATFORM_WIN32
@@ -17,10 +17,10 @@ if PLATFORM_DEFAULT
     COMMON_CFLAGS += -rdynamic
 endif
 
-AM_CFLAGS = -std=gnu99 $(COMMON_CFLAGS)
-AM_CXXFLAGS = -std=gnu++0x $(COMMON_CFLAGS) #-fno-default-inline -fkeep-inline-functions
+AM_CFLAGS   += -std=gnu99 $(COMMON_CFLAGS)
+AM_CXXFLAGS += $(COMMON_CFLAGS) #-fno-default-inline -fkeep-inline-functions
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -I$(top_builddir)
 
 mycpp_private_headers =			\
 	mycpp_thread_local.h
@@ -201,10 +201,10 @@ nodist_libmycpp_1_0_la_SOURCES = $(MYCPP_GENFILES)
 
 if PLATFORM_WIN32
 native_file.h: native_file.win32.h
-	ln -s native_file.win32.h native_file.h
+	ln -s $(srcdir)/native_file.win32.h native_file.h
 else
 native_file.h: native_file.linux.h
-	ln -s native_file.linux.h native_file.h
+	ln -s $(srcdir)/native_file.linux.h native_file.h
 endif
 
 libmycppincludedir = $(includedir)/mycpp-1.0/mycpp
