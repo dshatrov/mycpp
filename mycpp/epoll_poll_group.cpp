@@ -177,16 +177,11 @@ EpollPollGroup::addPollable (Pollable        *pollable,
       // hence we can subscribe for deletion without holding state_mutex.
       // (PollableRecord is not yet fully initialized here)
 
-#if 0
-	CallbackDesc<Object::DeletionCallback> cb;
-	cb.weak_obj = this;
-	cb.callback = pollable_deletion_callback;
-	cb.callbackData = pr;
-	cb.addRefData (pr);
-
-	pr->pollable_deletion_sbn = pollable->addDeletionCallback (cb);
-#endif
-	pr->pollable_deletion_sbn = pollable->addDeletionCallbackNonmutual (pollable_deletion_callback, pr, pr, this);
+	pr->pollable_deletion_sbn = pollable->addDeletionCallbackNonmutual (
+                                            M::CbDesc<Object::DeletionCallback> (pollable_deletion_callback,
+                                                                              pr,
+                                                                              this,
+                                                                              pr));
     }
 
     state_mutex.lock ();

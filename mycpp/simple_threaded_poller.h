@@ -144,8 +144,9 @@ public:
 
     /*m The destructor.
      */
-    ~SimpleThreadedPoller ()
-		    throw (InternalException);
+    ~SimpleThreadedPoller ();
+// Commented out for clang.
+//		    throw (InternalException);
 };
 
 }

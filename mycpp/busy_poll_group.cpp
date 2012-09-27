@@ -147,16 +147,12 @@ BusyPollGroup::addPollable (Pollable *pollable,
 	deletion_data->weak_self = this;
 	deletion_data->weak_pr = pr;
 
-#if 0
-	CallbackDesc<DeletionCallback> cb;
-	cb.weak_obj = this;
-	cb.callback = pollable_deletion_callback;
-	cb.callbackData = deletion_data;
-	cb.addRefData (deletion_data);
-
-	pr->del_sbn = pollable->addDeletionCallback (cb);
-#endif
-	pr->del_sbn = pollable->addDeletionCallback (pollable_deletion_callback, deletion_data, deletion_data, this);
+	pr->del_sbn = pollable->addDeletionCallback (
+                              M::CbDesc<Object::DeletionCallback> (
+                                      pollable_deletion_callback,
+                                      deletion_data,
+                                      this,
+                                      deletion_data));
     }
 
     {
@@ -224,7 +220,8 @@ BusyPollGroup::removePollable (PollGroup::PollableRecord *_pr)
 }
 
 Ref<Pollable>
-BusyPollGroup::poll (IoActor::Events *ret_events)
+BusyPollGroup::poll (IoActor::Events *ret_events,
+                     int              timeout_msec)
     throw (InternalException)
 {
     DEBUG (

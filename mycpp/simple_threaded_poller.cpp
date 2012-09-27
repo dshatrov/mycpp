@@ -311,16 +311,11 @@ SimpleThreadedPoller::addPollable (Pollable *pollable,
 	}
 
 	{
-#if 0
-	    CallbackDesc<DeletionCallback> cb;
-	    cb.weak_obj = this;
-	    cb.callback = pollable_deletion_callback;
-	    cb.callbackData = pr;
-	    cb.addRefData (pr);
-
-	    pr->del_sbn = pollable->addDeletionCallback (cb);
-#endif
-	    pr->del_sbn = pollable->addDeletionCallback (pollable_deletion_callback, pr, pr, this);
+	    pr->del_sbn = pollable->addDeletionCallback (
+                                  M::CbDesc<DeletionCallback> (pollable_deletion_callback,
+                                                            pr,
+                                                            this,
+                                                            pr));
 	}
 
 	Ref<ThreadData> thread_data;
@@ -516,7 +511,8 @@ SimpleThreadedPoller::SimpleThreadedPoller (ObjectFactory<ActivePollGroup> *fact
 }
 
 SimpleThreadedPoller::~SimpleThreadedPoller ()
-    throw (InternalException)
+// Commented out for clang.
+//    throw (InternalException)
 {
     // Questionable: will deadlock if the destructor is called
     // in a polling thread.

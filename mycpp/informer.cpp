@@ -72,17 +72,12 @@ GenericInformer::subscribeVoid (const CallbackDesc<VoidFunction> &cb,
     s->cb.setDesc (&cb);
 
     if (obj) {
-#if 0
-// Deprecated
-	CallbackDesc<Referenced::DeletionCallback> dcb;
-	dcb.weak_obj = this;
-	dcb.callback = subscriberDeletionCallback;
-	dcb.callbackData = s;
-	dcb.addRefData (s);
-
-	s->deletion_sbn = obj->addDeletionCallback (dcb);
-#endif
-	s->deletion_sbn = obj->addDeletionCallbackNonmutual (subscriberDeletionCallback, s, s, this);
+	s->deletion_sbn = obj->addDeletionCallbackNonmutual (
+                                  M::CbDesc<Object::DeletionCallback> (
+                                          subscriberDeletionCallback,
+                                          s,
+                                          this,
+                                          s));
     }
 
     state_mutex.lock ();

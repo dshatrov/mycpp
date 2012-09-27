@@ -219,10 +219,11 @@ WsaPollGroup::addPollable (Pollable *pollable,
 
     pr->del_sbn =
             pollable->addDeletionCallbackNonmutual (
-                    pollable_deletion_callback,
-                    pr   /* cb_data */,
-                    pr   /* ref_data */,
-                    this /* guard_obj */);
+                    M::CbDesc<Object::DeletionCallback> (
+                            pollable_deletion_callback,
+                            pr   /* cb_data */,
+                            this /* guard_obj */,
+                            pr   /* ref_data */));
 
     pr->pollables_link = pollables.append (pr);
     num_pollables ++;

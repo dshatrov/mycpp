@@ -115,16 +115,12 @@ ImmediateScheduler::scheduleTask (const CallbackDesc<TaskCallback> &cb)
     tr->cb = cb;
 
     if (!obj.isNull ()) {
-#if 0
-	CallbackDesc<Referenced::DeletionCallback> dcb;
-	dcb.weak_obj = this;
-	dcb.callback = clientDeletionCallback;
-	dcb.callbackData = static_cast <void*> (tr);
-	dcb.addRefData (tr);
-
-	tr->deletion_sbn = obj->addDeletionCallback (dcb);
-#endif
-	tr->deletion_sbn = obj->addDeletionCallbackNonmutual (clientDeletionCallback, tr, tr, this);
+	tr->deletion_sbn = obj->addDeletionCallbackNonmutual (
+                                   M::CbDesc<Object::DeletionCallback> (
+                                           clientDeletionCallback,
+                                           tr,
+                                           this,
+                                           tr));
     }
 
     tasks_mutex.lock ();

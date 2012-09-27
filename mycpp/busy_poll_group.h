@@ -59,7 +59,8 @@ public:
     void removePollable (PollGroup::PollableRecord *pr)
 		  throw (InternalException);
 
-    Ref<Pollable> poll (IoActor::Events *ret_events)
+    Ref<Pollable> poll (IoActor::Events *ret_events,
+                        int              timeout_msec)
 		 throw (InternalException);
 
     void trigger ()
