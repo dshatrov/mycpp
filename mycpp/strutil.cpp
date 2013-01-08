@@ -267,10 +267,28 @@ compareByteArrayToString (ConstMemoryDesc const &buf,
 }
 
 bool
-stringHasSuffix (ConstMemoryDesc const &str,
-		 ConstMemoryDesc const &suffix,
-		 ConstMemoryDesc *ret_str)
+stringHasSuffix (ConstMemoryDesc   const str,
+		 ConstMemoryDesc   const suffix,
+		 ConstMemoryDesc * const ret_str)
 {
+    if (ret_str)
+        *ret_str = str;
+
+    ConstMemory base_str;
+    bool const match = M::stringHasSuffix (M::ConstMemory (str.getMemory(), str.getLength()),
+                                           M::ConstMemory (suffix.getMemory(), suffix.getLength()),
+                                           &base_str);
+    if (!match)
+        return false;
+
+    if (ret_str)
+        *ret_str = base_str;
+
+    return true;
+
+#if 0
+// Deprecated
+
     if (ret_str != NULL)
 	*ret_str = str;
 
@@ -295,6 +313,7 @@ stringHasSuffix (ConstMemoryDesc const &str,
 	*ret_str = ConstMemoryDesc (str.getMemory (), str.getLength () - suffix.getLength ());
 
     return true;
+#endif
 }
 
 bool
@@ -305,11 +324,11 @@ stringHasSuffix (const char *str,
     if (ret_str != NULL)
 	*ret_str = str;
 
-    if (str == NULL)
-	return false;
-
     if (suffix == NULL)
 	return true;
+
+    if (str == NULL)
+	return false;
 
     return stringHasSuffix (ConstMemoryDesc (str, countStrLength (str)),
 			    ConstMemoryDesc (suffix, countStrLength (suffix)),

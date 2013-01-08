@@ -19,8 +19,8 @@ ComparisonResult compareByteArrays (ConstMemoryDesc const &buf1,
 ComparisonResult compareByteArrayToString (ConstMemoryDesc const &buf,
 					   const char *str);
 
-bool stringHasSuffix (ConstMemoryDesc const &str,
-		      ConstMemoryDesc const &suffix,
+bool stringHasSuffix (ConstMemoryDesc  str,
+		      ConstMemoryDesc  suffix,
 		      ConstMemoryDesc *ret_str);
 
 bool stringHasSuffix (const char *str,
